@@ -241,7 +241,7 @@ def generate_historic_data_content():
             #),
             html.Div(
                 children=[
-                    html.H2("Calldata (In-)Equality"),
+                    html.H2("Calldata Usage (In-)Equality"),
                     dcc.Graph(
                         id="calldatacumdist",
                         figure=calldatacumdist,
