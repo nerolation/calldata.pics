@@ -7,7 +7,11 @@ from sqlalchemy import text
 
 from config import MAX_BLOCKS_TO_FETCH, init_heroku
 
-testing = False
+try:
+    with open("config/testing.txt", "r") as file:
+        testing = file.read().strip()
+except:
+    testing = False
 
 conn = init_heroku(testing)
 

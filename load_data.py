@@ -1,5 +1,33 @@
 import pickle
 import pandas as pd
+import os
+
+chart_filenames = [
+    "gasusageperday.pickle",
+    "beaconblock.pickle",
+    "calldataovertime.pickle",
+    "calldatacumdist.pickle",
+    "calldataslotlorenz.pickle",
+    "calldatahist.pickle",
+    "gas_used_over_time.pickle",
+    "cumulative_data_over_time.pickle",
+    "beaconblock_over_time.pickle",
+    "calldataentities_over_time.pickle",
+    "fields4.pickle",
+    "entity_pie.pickle"
+]
+
+# Function to print file sizes in MB
+def print_file_sizes(filenames):
+    for filename in filenames:
+        # Get size in bytes
+        size_bytes = os.path.getsize(filename)
+        # Convert to MB
+        size_mb = size_bytes / (1024 * 1024)
+        print(f"{filename}: {size_mb:.2f} MB")
+
+# Call the function
+print_file_sizes(chart_filenames)
 
 avgs = pd.read_parquet("averages.parquet")
 calldatatxs = pd.read_parquet("calldatatxs.parquet")
