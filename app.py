@@ -278,12 +278,57 @@ spinner = html.Div(
     id="loadingspinner", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
 )
 
+
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZS0X24WZTE"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-ZS0X24WZTE');
+        </script>
+        <meta charset="UTF-8">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@nero_ETH">
+        <meta name="twitter:title" content="Ethereum Calldata Dashboard">
+        <meta name="twitter:description" content="Insights into block sizes and calldata usage on Ethereum.">
+        <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
+        <meta property="og:title" content="Calldata.pics" relay="" api="" dashboard="">
+        <meta property="og:site_name" content="calldata.pics">
+        <meta property="og:url" content="calldata.pics">
+        <meta property="og:description" content="Insights into block sizes and calldata usage on Ethereum.">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/calldatapics_og_image.jpg">
+        <meta name="description" content="Insights into block sizes and calldata usage on Ethereum.">
+        <meta name="keywords" content="Ethereum, Calldata, DotPics, Dashboard">
+        <meta name="author" content="Toni Wahrstätter">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/favicon.png">
+        {%metas%}
+        <title>{%title%}</title>
+        {%css%}
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
 app.title = 'Calldata.pics'
 server = app.server
 
 app.layout = html.Div(
     [
-        html.H1("Ethereum Data Dashboard", style={"textAlign": "center"}),
+        html.H1("Calldata.pics", style={"textAlign": "center", "marginBottom": "2vh"}),
         dcc.Store(id="timezone-store"),
         dcc.Store(id="stored-data"),
         dcc.Interval(
