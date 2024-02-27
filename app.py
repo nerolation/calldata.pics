@@ -19,7 +19,9 @@ from utils import *
 from config import *
 from load_data import *
 
+import logging
 
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY])
