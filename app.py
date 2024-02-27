@@ -276,6 +276,9 @@ spinner = html.Div(
     id="loadingspinner", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
 )
 
+app.title = 'Calldata.pics'
+server = app.server
+
 app.layout = html.Div(
     [
         html.H1("Ethereum Data Dashboard", style={"textAlign": "center"}),
@@ -639,6 +642,5 @@ def update_tab_content(selected_tab):
 
 
 if __name__ == '__main__':
-    server = app.server
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
