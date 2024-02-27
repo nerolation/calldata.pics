@@ -478,7 +478,7 @@ def update_line_chart(n, tz_info, stored_data):
         title=None,
         xaxis_title="Time",
         yaxis_title="MB",
-        dragmode=None,
+        dragmode=False,
         plot_bgcolor="#0a0a0a",
         paper_bgcolor="#0a0a0a",
         margin={"t": 0, "b": 0, "r": 50, "l": 50},
@@ -533,7 +533,7 @@ def update_line_chart(n, tz_info, stored_data):
         xaxis_title="Time",
         yaxis_title="MB",
         margin={"t": 0, "b": 0, "r": 50, "l": 50},
-        dragmode=None,
+        dragmode=False,
         plot_bgcolor="#0a0a0a",
         paper_bgcolor="#0a0a0a",
         font=dict(
@@ -588,7 +588,7 @@ def update_line_chart(n, tz_info, stored_data):
         title=None,
         xaxis_title="Time",
         yaxis_title="MB",
-        dragmode=None,
+        dragmode=False,
         margin={"t": 0, "b": 0, "r": 50, "l": 50},
         plot_bgcolor="#0a0a0a",
         paper_bgcolor="#0a0a0a",
@@ -642,7 +642,6 @@ def update_line_chart(n, tz_info, stored_data):
         title=None,
         xaxis_title="Time",
         yaxis_title="MB",
-        dragmode=None,
         margin={"t": 0, "b": 0, "r": 50, "l": 50},
         plot_bgcolor="#0a0a0a",
         paper_bgcolor="#0a0a0a",
@@ -661,6 +660,7 @@ def update_line_chart(n, tz_info, stored_data):
                 size=16
             ),
         ),
+        dragmode=False,
         hovermode="x unified",
         xaxis=dict(
             fixedrange=True,
