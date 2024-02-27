@@ -4,8 +4,8 @@ import os
 MAX_BLOCKS_TO_FETCH = 100
 CONFIG_FOLDER = 'config/'
 
-def init_heroku(live=False):
-    if live:
+def init_heroku(testing=False):
+    if not testing:
         HEROKU_DB_URL = os.environ.get("HEROKU_POSTGRESQL_BLUE_URL")
     else:
         with open(CONFIG_FOLDER + "database_url", "r") as file:
