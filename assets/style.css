@@ -14,9 +14,16 @@ body {
     background-color: #0a0a0a;
 }
 
+.mobilespace {
+        margin-bottom: 0vh;
+    }
+
 @media (max-width: 768px) {
     .graph-container {
         width: 100%;
+    }
+    .mobilespace {
+        margin-bottom: 2vh;
     }
 }
 

@@ -84,7 +84,10 @@ row_5 = create_row([
 
 row_6 = create_row([
     card_content_beacon_share, 
-    card_content_payload_share, 
+    card_content_payload_share
+])
+
+row_61 = create_row([
     card_content_evm_ratio, 
     card_content_calldata_ratio
 ])
@@ -102,6 +105,7 @@ cards0 = html.Div([row_1], style={'padding-top': '20px', 'marginLeft': '2vw', 'm
 cards3 = html.Div([row_5], style={'padding-top': '20px', 'marginLeft': '2vw', 'marginRight': '2vw'})
 cards4 = html.Div([row_2], style={'padding-top': '20px', 'marginLeft': '2vw', 'marginRight': '2vw'})
 cards5 = html.Div([row_6], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
+cards51 = html.Div([row_61], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
 cards6 = html.Div([row_7], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
 
 
@@ -135,79 +139,9 @@ entity_table = dash_table.DataTable(
     # page_size=12,
 )
 
-def generate_historic_data_content():
+def generate_rollup_data_content():
     content = html.Div(
         [
-            html.Div(
-                children=[
-                    dcc.Loading(
-                        id="loading-0",
-                        type="default",
-                        children=[
-                            html.Div(
-                                [
-                                    html.H2("Gas Usage Per Day"),
-                                    dcc.Graph(figure=gas_used_over_time),
-                                    cards0,
-                                ],
-                                style={
-                                    "width": "100%",
-                                    "marginBottom": "10vh",
-                                    "margin-top": "2vh",
-                                },
-                        )]
-                    ),
-                    dcc.Loading(
-                        html.Div(
-                            [
-                                html.H2("Calldata Used Per Day"),
-                                dcc.Graph(figure=cumulative_data_over_time),
-                                cards3,
-                            ],
-                            style={
-                                "width": "100%",
-                                "marginBottom": "10vh",
-                                "margin-top": "2vh",
-                            },
-                        )
-                    ),
-                    dcc.Loading(
-                        html.Div(
-                            [
-                                html.H2("Snappy Compressed Beacon Block Size over Time"),
-                                dcc.Graph(figure=beaconblock_over_time),
-                                cards4,
-                            ],
-                            style={
-                                "width": "100%",
-                                "marginBottom": "10vh",
-                                "margin-top": "2vh",
-                            },
-                        )
-                    ),
-                    html.H2("Beacon Block Components"),
-                    dcc.Graph(
-                        id="beaconblock_el_share",
-                        figure=beaconblock,
-                        className="graph-container",
-                    ),
-                    dcc.Graph(
-                        id="calldata_evm_gas_share",
-                        figure=gasuageperday,
-                        className="graph-container",
-                    ),
-                    cards5,
-                ],
-                style={"padding-bottom": "10vh"},
-            ),
-            html.Div(
-                [
-                    html.H2("Average and Max. Calldata Usage Over Time"),
-                    dcc.Graph(figure=calldataovertime),
-                    cards6,
-                ],
-                style={"width": "100%", "marginBottom": "10vh"},
-            ),
             html.Div(
                 [
                     html.H2("Daily Calldata Usage Per Entity"),
@@ -233,16 +167,40 @@ def generate_historic_data_content():
                 ],
                 style={"width": "100%", "marginBottom": "10vh"},
             ),
-            #html.Div(
-            #    [
-            #        dcc.Graph(
-            #            figure=fields4,
-            #            style={"marginBottom": "10vh"},
-            #        ),
-            #     ]
-            #),
+        ],
+    )
+    return content
+
+
+def generate_calldata_data_content():
+    content = dcc.Loading([
+            html.Div(
+                [
+                    html.H2("Calldata Used Per Day"),
+                    dcc.Graph(figure=cumulative_data_over_time),
+                    cards3,
+                ],
+                style={
+                    "width": "100%",
+                    "marginBottom": "10vh",
+                    "margin-top": "2vh",
+                },
+            ),
+            html.Div(
+                [
+                    html.H2("Average and Max. Calldata Usage Over Time"),
+                    dcc.Graph(figure=calldataovertime),
+                    cards6,
+                ],
+                style={"width": "100%", "marginBottom": "10vh"},
+            ),
             html.Div(
                 children=[
+                    dcc.Graph(
+                        id="calldata_evm_gas_share",
+                        figure=gasuageperday,
+                    ),
+                    cards51,
                     html.H2("Calldata Usage (In-)Equality"),
                     dcc.Graph(
                         id="calldatacumdist",
@@ -262,8 +220,81 @@ def generate_historic_data_content():
                         className="graph-container",
                         style={"width": "25%"},
                     ),
+                    
                 ]
             ),
+        ])
+        
+    return content
+    
+def generate_historic_data_content():
+    content = html.Div(
+        [
+            html.Div(
+                children=[
+                    dcc.Loading(
+                        id="loading-0",
+                        type="default",
+                        children=[
+                            html.Div(
+                                [
+                                    html.H2("Gas Usage Per Day"),
+                                    dcc.Graph(figure=gas_used_over_time),
+                                    cards0,
+                                ],
+                                style={
+                                    "width": "100%",
+                                    "marginBottom": "10vh",
+                                    "margin-top": "2vh",
+                                },
+                        )]
+                    ),
+                    dcc.Loading(
+                        html.Div(
+                            [
+                                html.H2("Snappy Compressed Beacon Block Size over Time"),
+                                dcc.Graph(figure=beaconblock_over_time),
+                                cards4,
+                            ],
+                            style={
+                                "width": "100%",
+                                "marginBottom": "10vh",
+                                "margin-top": "2vh",
+                            },
+                        )
+                    ),
+                    dcc.Loading(
+                        html.Div(
+                            [
+                                html.H2("Snappy Compressed Beacon Block Size over Time"),
+                                dcc.Graph(figure=maxblockvsavg),
+                                cards4,
+                            ],
+                            style={
+                                "width": "100%",
+                                "marginBottom": "10vh",
+                                "margin-top": "2vh",
+                            },
+                        )
+                    ),
+                    html.H2("Beacon Block Components"),
+                    dcc.Graph(
+                        id="beaconblock_el_share",
+                        figure=beaconblock,
+                    ),
+                    cards5
+                ],
+                style={"padding-bottom": "10vh"},
+            ),
+            #html.Div(
+            #    [
+            #        dcc.Graph(
+            #            figure=fields4,
+            #            style={"marginBottom": "10vh"},
+            #        ),
+            #     ]
+            #),
+            
         ],
     )
     return content
@@ -276,6 +307,25 @@ spinner = html.Div(
         "Loading..."
     ],
     id="loadingspinner", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
+)
+
+
+spinner2 = html.Div(
+    children=[
+        dbc.Spinner(spinner_style={"width": "3rem", "height": "3rem"}), 
+        html.Span(["       "], style={"paddingRight":"1vw"}),
+        "Loading..."
+    ],
+    id="loadingspinner2", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
+)
+
+spinner3 = html.Div(
+    children=[
+        dbc.Spinner(spinner_style={"width": "3rem", "height": "3rem"}), 
+        html.Span(["       "], style={"paddingRight":"1vw"}),
+        "Loading..."
+    ],
+    id="loadingspinner3", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
 )
 
 
@@ -328,9 +378,10 @@ server = app.server
 
 app.layout = html.Div(
     [
-        html.H1("Calldata.pics", style={"textAlign": "center", "marginBottom": "2vh"}),
+        html.H1("Calldata.pics", style={"textAlign": "center", "marginBottom": "2vh", "marginTop": "2vh"}),
         dcc.Store(id="timezone-store"),
         dcc.Store(id="stored-data"),
+        html.Div([], className="mobilespace"),
         dcc.Interval(
             id="interval-timezone-update", interval=3600 * 1000, n_intervals=0
         ),
@@ -354,7 +405,7 @@ app.layout = html.Div(
                             config={"displayModeBar": False},
                         ),
                         dcc.Interval(
-                            id="interval-component", interval=1000, n_intervals=0
+                            id="interval-component", interval=2000, n_intervals=0
                         ),
                         html.H2("Live Gas Usage"),
                         dcc.Graph(
@@ -374,16 +425,42 @@ app.layout = html.Div(
                             style={"margin-bottom": "5vh", "height": "40vh"},
                             config={"displayModeBar": False},
                         ),
+                        html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
+                        dcc.Graph(
+                            id="live-bubble-chart5",
+                            style={"margin-bottom": "5vh", "height": "40vh"},
+                            config={"displayModeBar": False},
+                        ),
                     ],
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
-                    label='Historic Data', 
+                    label='Historic Size Data', 
                     value='tab-2', 
                     children=[
                         spinner,
                         html.Div(id='historic-data-content')
+                    ], 
+                    style=tab_style, 
+                    selected_style=tab_selected_style
+                ),
+                dcc.Tab(
+                    label='Rollups/L2s', 
+                    value='tab-3', 
+                    children=[
+                        spinner2,
+                        html.Div(id='rollup-data-content')
+                    ], 
+                    style=tab_style, 
+                    selected_style=tab_selected_style
+                ),
+                dcc.Tab(
+                    label='Calldata', 
+                    value='tab-4', 
+                    children=[
+                        spinner3,
+                        html.Div(id='calldata-data-content')
                     ], 
                     style=tab_style, 
                     selected_style=tab_selected_style
@@ -410,6 +487,7 @@ app.clientside_callback(
     Output('live-bubble-chart2', 'figure'),
     Output('live-bubble-chart3', 'figure'),
     Output('live-bubble-chart4', 'figure'),
+    Output('live-bubble-chart5', 'figure'),
     Output('stored-data', 'data'),
     Output('timezone-display', 'children'),
 ], [
@@ -441,6 +519,7 @@ def update_line_chart(n, tz_info, stored_data):
     block_size_nc = df.iloc[0:n+25]["size"]/1024**2
     calldata_zeros = df.iloc[0:n+25]["calldatazeros"]/1024**2
     calldata_nonzeros = df.iloc[0:n+25]["calldatanonzeros"]/1024**2
+    nr_blobs = df.iloc[0:n+25]["nr_blobs"] * 128/1024
     gas_usage = df.iloc[0:n+25]["gas_used"]
     days = df.iloc[0:n+25]["time"]
     slots = df.iloc[0:n+25]["slot"]
@@ -671,21 +750,73 @@ def update_line_chart(n, tz_info, stored_data):
             gridcolor="rgba(255, 255, 255, 0.5)"
         ),
     )
-    return figure, figure2, figure3, figure4, stored_data, html.H5(timezone_text)
+    figure5 = go.Figure(data=[go.Scatter(
+        x=days,
+        y=nr_blobs,
+        mode='lines+markers',
+        fillcolor='rgba(255, 127, 14, 0.6)', line_color='rgba(255, 127, 14, 0.6)',
+        line_width=3,
+        name="Zero-Bytes",
+        customdata=slots,
+        hovertemplate='Slot: %{customdata:,}<br>Zero-Bytes: %{y:.2f} MB<extra></extra>',
+
+    )])
+    figure5.update_layout(
+        title=None,
+        xaxis_title="Time",
+        yaxis_title="MB",
+        margin={"t": 0, "b": 0, "r": 50, "l": 50},
+        plot_bgcolor="#0a0a0a",
+        paper_bgcolor="#0a0a0a",
+        font=dict(
+            color="white",
+            size=16
+        ),
+        legend=dict(
+            yanchor="top",
+            y=1,
+            xanchor="left",
+            x=0.91,
+            bgcolor='rgba(10, 10, 10, 0)',
+            font=dict(
+                color="white",
+                size=16
+            ),
+        ),
+        dragmode=False,
+        hovermode="x unified",
+        xaxis=dict(
+            fixedrange=True,
+            gridcolor="rgba(255, 255, 255, 0.5)"
+        ),
+        yaxis=dict(
+            fixedrange=True,
+            gridcolor="rgba(255, 255, 255, 0.5)"
+        ),
+    )
+    return figure, figure2, figure3, figure4, figure5, stored_data, html.H5(timezone_text)
 
 
 @app.callback(
     [
         Output('historic-data-content', 'children'),
-        Output('loadingspinner', 'children')
+        Output('rollup-data-content', 'children'),
+        Output('calldata-data-content', 'children'),
+        Output('loadingspinner', 'children'),
+        Output('loadingspinner2', 'children'),
+        Output('loadingspinner3', 'children')
     ], [   
         Input('tabs', 'value')
     ]
 )
 def update_tab_content(selected_tab):
     if selected_tab == 'tab-2':
-        return generate_historic_data_content(), []
-    return [], spinner
+        return generate_historic_data_content(), [], [], [], [], []
+    if selected_tab == 'tab-3':
+        return [], generate_rollup_data_content(), [], [], [], []
+    if selected_tab == 'tab-4':
+        return [], [], generate_calldata_data_content(), [], [], []
+    return [], [], [], spinner, spinner2, spinner3
 
 
 if __name__ == '__main__':

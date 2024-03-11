@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 import os
 
-MAX_BLOCKS_TO_FETCH = 100
+MAX_BLOCKS_TO_FETCH = 50
 CONFIG_FOLDER = 'config/'
 
 def init_heroku(testing=False):
