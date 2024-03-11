@@ -499,6 +499,8 @@ def update_line_chart(n, tz_info, stored_data):
     df = pd.DataFrame() if n == 0 or stored_data is None else pd.DataFrame.from_records(stored_data)
     if (n == 0 or stored_data is None or n % (MAX_BLOCKS_TO_FETCH - 25) == 0) and n <= 600:
         print("extending data")
+        if n != 0:
+            time.sleep(12)
         _df = read_table_from_heroku("blocks")
         _df = prep_livedata(_df)
         df = pd.concat([df, _df], ignore_index=True).drop_duplicates()
