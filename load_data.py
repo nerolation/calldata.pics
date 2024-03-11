@@ -25,7 +25,7 @@ chart_filenames = [
 def print_file_sizes(filenames):
     for filename in filenames:
         # Get size in bytes
-        size_bytes = os.path.getsize(filename)
+        size_bytes = os.path.getsize(CHART_LOC+filename)
         # Convert to MB
         size_mb = size_bytes / (1024 * 1024)
         print(f"{filename}: {size_mb:.2f} MB")
