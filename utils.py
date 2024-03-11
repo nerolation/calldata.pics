@@ -21,8 +21,8 @@ def slot_to_time(slot):
     formatted_time = dt_object.strftime("%Y-%m-%d %H:%M:%S")
     return formatted_time
 
-def prep_livedata(_df):
-    df = _df.copy()
+def prep_livedata(df):
+    #df = _df.copy()
     df.sort_values("slot", inplace=True)
     df.reset_index(drop=True, inplace=True)
     df["time"] = df["slot"].apply(lambda x: slot_to_time(x))    

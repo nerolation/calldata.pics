@@ -527,8 +527,8 @@ def update_line_chart(n, tz_info, stored_data):
         x=days,
         y=block_size_compressed,
         mode='lines+markers',
-        fillcolor='rgba(255, 127, 14, 0.6)', line_color='rgba(255, 127, 14, 0.6)',
-        line_width=3,
+        fillcolor='rgba(92, 185, 250, 0.6)', line_color='rgba(92, 185, 250, 0.6)',
+        line_width=4,
         name="Beacon Block",
         customdata=slots,
         hovertemplate='Slot: %{customdata:,}<br>Beacon Block Size: %{y:.2f} MB<extra></extra>',
@@ -537,9 +537,9 @@ def update_line_chart(n, tz_info, stored_data):
         x=days,
         y=el_block_size_compressed,
         mode='lines+markers',
-        fillcolor='rgba(92, 185, 250, 0.6)', line_color='rgba(92, 185, 250, 0.6)',
+        fillcolor='rgba(255, 127, 14, 0.6)', line_color='rgba(255, 127, 14, 0.6)',
         name="EL Payload",
-        line_width=3,
+        line_width=4,
         customdata=slots,
         hovertemplate='EL Payload Size: %{y:.2f} MB<extra></extra>',
 
@@ -548,7 +548,7 @@ def update_line_chart(n, tz_info, stored_data):
         x=days,
         y=avgs["median_size_compressed"].tolist()*len(days),
         mode='lines',
-        line=dict(color='red', dash='longdash', width=4),
+        line=dict(color='red', dash='longdash', width=2),
         hovertemplate='30d Avg Calldata Size: %{y:.2f} MB<extra></extra>',
         name='30d average'
     ))
