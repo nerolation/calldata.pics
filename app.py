@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import numpy as np
 import pickle
+import time
 import dash_cytoscape as cyto
 import uuid
 import copy
@@ -23,9 +24,7 @@ import logging
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY])
-
 
 card_content_calldatasum_median = create_card("Median Calldata Per Block", f"{calldata_summary[0]} MB")
 card_content_calldatasum_mean = create_card("Mean Calldata Per Block", f"{calldata_summary[1]} MB")
@@ -148,6 +147,18 @@ def generate_rollup_data_content():
                     dcc.Graph(
                         figure=calldataentities_over_time,
                         style={"marginBottom": "10vh"},
+                        config={"displayModeBar": False},
+                    ),
+                ],
+                style={"width": "100%", "marginBottom": "10vh"},
+            ),
+            html.Div(
+                [
+                    html.H2("Calldata Posting Over Slot in Epoch (last 30 days)"),
+                    dcc.Graph(
+                        figure=rollupslot,
+                        style={"marginBottom": "10vh"},
+                        config={"displayModeBar": False},
                     ),
                 ],
                 style={"width": "100%", "marginBottom": "10vh"},
@@ -156,10 +167,16 @@ def generate_rollup_data_content():
                 [
                     dbc.Col(entity_table, width=12, md=6),
                     dbc.Col(
-                        dcc.Graph(
-                            id="daily-transactions3",
-                            figure=entity_pie,
-                            className="graph-container",
+                        html.Div(
+                            [
+                                html.H4("Calldata Share (last 30 days)"),
+                                dcc.Graph(
+                                    id="daily-transactions3",
+                                    figure=entity_pie,
+                                    className="graph-container",
+                                    config={"displayModeBar": False},
+                                ),
+                            ]
                         ),
                         width=12,
                         md=6,
@@ -167,6 +184,7 @@ def generate_rollup_data_content():
                 ],
                 style={"width": "100%", "marginBottom": "10vh"},
             ),
+            
         ],
     )
     return content
@@ -177,7 +195,7 @@ def generate_calldata_data_content():
             html.Div(
                 [
                     html.H2("Calldata Used Per Day"),
-                    dcc.Graph(figure=cumulative_data_over_time),
+                    dcc.Graph(figure=cumulative_data_over_time, config={"displayModeBar": False}),
                     cards3,
                 ],
                 style={
@@ -189,37 +207,64 @@ def generate_calldata_data_content():
             html.Div(
                 [
                     html.H2("Average and Max. Calldata Usage Over Time"),
-                    dcc.Graph(figure=calldataovertime),
+                    dcc.Graph(figure=calldataovertime, config={"displayModeBar": False}),
                     cards6,
                 ],
                 style={"width": "100%", "marginBottom": "10vh"},
             ),
             html.Div(
-                children=[
+                [
                     dcc.Graph(
                         id="calldata_evm_gas_share",
                         figure=gasuageperday,
+                        config={"displayModeBar": False}
                     ),
                     cards51,
-                    html.H2("Calldata Usage (In-)Equality"),
+                ],
+                style={"width": "100%", "marginBottom": "10vh"},
+            ),
+            html.Div(
+                [
+                    html.H4("Calldata Usage (In-)Equality"),
                     dcc.Graph(
                         id="calldatacumdist",
                         figure=calldatacumdist,
                         className="graph-container",
-                        style={"width": "50%"},
+                        style={"width": "100%"},
+                        config={"displayModeBar": False}
                     ),
-                    dcc.Graph(
-                        id="daily-transactions2",
-                        figure=calldatahist,
-                        className="graph-container",
-                        style={"width": "25%"},
-                    ),
-                    dcc.Graph(
-                        id="daily-transactions4",
-                        figure=calldataslotlorenz,
-                        className="graph-container",
-                        style={"width": "25%"},
-                    ),
+                ],
+                style={"width": "100%", "marginBottom": "10vh"},
+            ),
+        
+            html.Div(
+                children=[
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                html.Div(
+                                    children=[
+                                        html.H4("Calldata Distribution"),
+                                        dcc.Graph(
+                                            id="daily-transactions2",
+                                            figure=calldatahist,
+                                            className="graph-container",
+                                            style={"width": "50%"},
+                                            config={"displayModeBar": False}
+                                        )
+                                    ]
+                                )
+                            ),
+                            dbc.Col(
+                                dcc.Graph(
+                                    id="daily-transactions4",
+                                    figure=calldataslotlorenz,
+                                    className="graph-container",
+                                    style={"width": "50%"},
+                                    config={"displayModeBar": False}
+                                )),
+                        ]
+                    )
                     
                 ]
             ),
@@ -239,7 +284,7 @@ def generate_historic_data_content():
                             html.Div(
                                 [
                                     html.H2("Gas Usage Per Day"),
-                                    dcc.Graph(figure=gas_used_over_time),
+                                    dcc.Graph(figure=gas_used_over_time, config={"displayModeBar": False}),
                                     cards0,
                                 ],
                                 style={
@@ -253,7 +298,7 @@ def generate_historic_data_content():
                         html.Div(
                             [
                                 html.H2("Snappy Compressed Beacon Block Size over Time"),
-                                dcc.Graph(figure=beaconblock_over_time),
+                                dcc.Graph(figure=beaconblock_over_time, config={"displayModeBar": False}),
                                 cards4,
                             ],
                             style={
@@ -267,7 +312,7 @@ def generate_historic_data_content():
                         html.Div(
                             [
                                 html.H2("Snappy Compressed Beacon Block Size over Time"),
-                                dcc.Graph(figure=maxblockvsavg),
+                                dcc.Graph(figure=maxblockvsavg, config={"displayModeBar": False}),
                                 cards4,
                             ],
                             style={
@@ -281,6 +326,7 @@ def generate_historic_data_content():
                     dcc.Graph(
                         id="beaconblock_el_share",
                         figure=beaconblock,
+                        config={"displayModeBar": False},
                     ),
                     cards5
                 ],

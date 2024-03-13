@@ -63,6 +63,9 @@ print("cumulative_data_over_time.pickle loaded")
 with open(CHART_LOC+"maxblockvsavg.pickle", "rb") as file:
     maxblockvsavg = pickle.load(file)
 print("maxblockvsavg.pickle loaded")
+with open(CHART_LOC+"rollupslot.pickle", "rb") as file:
+    rollupslot = pickle.load(file)
+print("rollupslot.pickle loaded")
 with open(CHART_LOC+"beaconblock_over_time.pickle", "rb") as file:
     beaconblock_over_time = pickle.load(file)
 print("beaconblock_over_time.pickle loaded")
