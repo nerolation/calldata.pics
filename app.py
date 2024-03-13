@@ -393,7 +393,7 @@ app.index_string = '''
         <meta name="twitter:site" content="@nero_ETH">
         <meta name="twitter:title" content="Ethereum Calldata Dashboard">
         <meta name="twitter:description" content="Insights into block sizes and calldata usage on Ethereum.">
-        <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
+        <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/calldatagames_og_image.jpg">
         <meta property="og:title" content="Calldata.pics" relay="" api="" dashboard="">
         <meta property="og:site_name" content="calldata.pics">
         <meta property="og:url" content="calldata.pics">
@@ -544,9 +544,7 @@ app.clientside_callback(
 def update_line_chart(n, tz_info, stored_data):
     df = pd.DataFrame() if n == 0 or stored_data is None else pd.DataFrame.from_records(stored_data)
     if (n == 0 or stored_data is None or n % (MAX_BLOCKS_TO_FETCH - 25) == 0) and n <= 600:
-        print("extending data")
-        if n != 0:
-            time.sleep(12)
+        #print("extending data")
         _df = read_table_from_heroku("blocks")
         _df = prep_livedata(_df)
         df = pd.concat([df, _df], ignore_index=True).drop_duplicates()
