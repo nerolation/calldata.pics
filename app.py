@@ -571,6 +571,33 @@ app.layout = html.Div(
         dcc.Store(id="timezone-store"),
         dcc.Store(id="stored-data"),
         dcc.Store(id="stored-data2"),
+        dbc.Row([
+            dbc.Col(html.Div([
+                html.H6([
+                    "Built with 🤍 by ",
+                    html.A("Toni Wahrstätter", href="https://twitter.com/nero_eth", target="_blank", 
+                           style={'color': '#ffffff'})
+                ], style={'color': '#ffffff'}),
+            ], style={'display': 'flex', 'align-items': 'center'}), width=6),
+            dbc.Col(
+                html.Div(
+                    id="last-updated",
+                    children=[html.H6(f"Last time updated: {last_updated}", style={'color': '#ffffff', "text-align": 'right', "paddingRight":"1vw"})],
+                    style={'display': 'flex', 'align-items': 'center', 'justify-content': 'flex-end'},
+                ), width=6
+            )
+        ]),
+        dbc.Row([
+            dbc.Col(html.Div(
+                children=[html.P("")],
+                style={'display': 'flex', 'align-items': 'center'},
+            ), width=6),
+            dbc.Col(html.Div(
+                id="timezone-display",
+                children=[html.H6("Time zone: ")],
+                style={'color': '#ffffff', "text-align": 'right', "paddingRight":"1vw"},
+            ), width=6),
+        ]),
         html.Div([], className="mobilespace"),
         dcc.Interval(
             id="interval-timezone-update", interval=3600 * 1000, n_intervals=0
@@ -583,11 +610,6 @@ app.layout = html.Div(
                     label="Live Data",
                     value="tab-1",
                     children=[
-                        html.Div(
-                            id="timezone-display",
-                            children=[html.P("Time zone: ")],
-                            style={"margin-top": "2vh"},
-                        ),
                         html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
                         dcc.Graph(
                             id="live-blob-chart",
@@ -630,6 +652,7 @@ app.layout = html.Div(
                     ],
                     style=tab_style,
                     selected_style=tab_selected_style,
+                    className='custom-tab'
                 ),
                 dcc.Tab(
                     label='Historic Size Data', 
@@ -639,7 +662,8 @@ app.layout = html.Div(
                         html.Div(id='historic-data-content')
                     ], 
                     style=tab_style, 
-                    selected_style=tab_selected_style
+                    selected_style=tab_selected_style,
+                    className='custom-tab'
                 ),
                 dcc.Tab(
                     label='Blob Data', 
@@ -649,7 +673,8 @@ app.layout = html.Div(
                         html.Div(id='blob-data-content')
                     ], 
                     style=tab_style, 
-                    selected_style=tab_selected_style
+                    selected_style=tab_selected_style,
+                    className='custom-tab'
                 ),
                 dcc.Tab(
                     label='Rollups/L2s', 
@@ -659,7 +684,8 @@ app.layout = html.Div(
                         html.Div(id='rollup-data-content')
                     ], 
                     style=tab_style, 
-                    selected_style=tab_selected_style
+                    selected_style=tab_selected_style,
+                    className='custom-tab'
                 ),
                 dcc.Tab(
                     label='Calldata', 
@@ -669,7 +695,8 @@ app.layout = html.Div(
                         html.Div(id='calldata-data-content')
                     ], 
                     style=tab_style, 
-                    selected_style=tab_selected_style
+                    selected_style=tab_selected_style,
+                    className='custom-tab'
                 ),
             ],
             style=tabs_styles,
@@ -684,9 +711,9 @@ def generate_live_blobs_per_entity_chart(_df):
     df['entity_id'] = df['entity'].astype('category').cat.codes
     df['size'] = df['nr_blobs'] * 1  # Scale factor for bubble size
     fig = px.scatter(df, x='time', y='entity_id', size='size', color='entity', hover_name='entity',
-                     size_max=10, title='Blobs Posted to Ethereum Mainnet Over Time', custom_data="size"
+                     size_max=10, title='Blobs Posted to Ethereum Mainnet Over Time', custom_data=["size","slot"]
     )
-    hovertext = '%{y}: %{customdata[0]:,.0f} blobs<extra></extra>'
+    hovertext = '%{customdata[1]:,.0f}<br>%{y}: %{customdata[0]:,.0f} blobs<extra></extra>'
     fig.update_traces(hovertemplate=hovertext)
     fig.update_yaxes(tickvals=df['entity_id'], ticktext=df['entity'])
     #ticks = list(range(df['slot'].min() - df['slot'].min()%32, df['slot'].max()))
@@ -758,6 +785,7 @@ app.clientside_callback(
     Output('stored-data', 'data'),
     Output('stored-data2', 'data'),
     Output('timezone-display', 'children'),
+    Output('last-updated', 'children')
 ], [
     Input('interval-component', 'n_intervals'),
     State('timezone-store', 'data'),
@@ -767,6 +795,7 @@ app.clientside_callback(
 def update_line_chart(n, tz_info, stored_data, stored_data2):
     df = pd.DataFrame() if n == 0 or stored_data is None else pd.DataFrame.from_records(stored_data)
     df_blobs = pd.DataFrame(columns=["slot", "time"]) if n == 0 or stored_data2 is None else pd.DataFrame.from_records(stored_data2)
+    last_updated_new = last_updated
     if (n == 0 or stored_data is None or n % (MAX_BLOCKS_TO_FETCH - 25) == 0) and n <= 600:
         #print("extending data")
         _df = read_table_from_heroku("blocks")
@@ -784,7 +813,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
     user_timezone = tz_info if tz_info else 'UTC'
     df['time'] = pd.to_datetime(df['time'])
     df_blobs['time'] = pd.to_datetime(df_blobs['time'])
-    
+    last_updated_new = convert_utc_to_timezone(last_updated, user_timezone)
     if df['time'].dt.tz is None:
         df['time'] = pd.to_datetime(df['time']).dt.tz_localize('UTC').dt.tz_convert(user_timezone)
         df_blobs['time'] = pd.to_datetime(df_blobs['time']).dt.tz_localize('UTC').dt.tz_convert(user_timezone)
@@ -792,6 +821,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
         df['time'] = df['time'].dt.tz_convert(user_timezone)
         df_blobs['time'] = df_blobs['time'].dt.tz_convert(user_timezone)
     timezone_text = f"Time zone: {tz_info}"
+    
     block_size_compressed = df.iloc[0:n+SHOW_INITIALLY]["size_compressed"]/1024**2
     el_block_size_compressed = df.iloc[0:n+SHOW_INITIALLY]["el_size_compressed"]/1024**2
     block_size_nc = df.iloc[0:n+SHOW_INITIALLY]["size"]/1024**2
@@ -1088,7 +1118,18 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
             gridcolor="rgba(255, 255, 255, 0.5)"
         ),
     )
-    return figure, figure2, figure3, figure4, figure5, figure_blobs, stored_data, stored_data2, html.H5(timezone_text)
+    return (
+        figure, 
+        figure2, 
+        figure3, 
+        figure4, 
+        figure5, 
+        figure_blobs, 
+        stored_data, 
+        stored_data2, 
+        html.H6(timezone_text, style={'color': '#ffffff', "text-align": 'right'}), 
+        last_updated_new
+    )
 
 
 @app.callback(

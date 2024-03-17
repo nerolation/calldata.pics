@@ -4,6 +4,7 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from sqlalchemy import text
+import pytz
 
 from config import MAX_BLOCKS_TO_FETCH, init_heroku
 
@@ -91,3 +92,10 @@ def create_row(args: list):
         ],
         className="mb-4",
     )
+
+def convert_utc_to_timezone(utc_date_str, timezone_str):
+    utc_date = datetime.strptime(utc_date_str, '%Y-%m-%d %H:%M')
+    utc_date = utc_date.replace(tzinfo=pytz.utc)
+    target_timezone = pytz.timezone(timezone_str)
+    local_date = utc_date.astimezone(target_timezone)
+    return html.H6(f"Last time updated: {local_date.strftime('%Y-%m-%d %H:%M')}", style={'color': '#ffffff', "text-align": 'right', "paddingRight":"1vw"})

@@ -35,3 +35,9 @@ h1, h2 {
 .dash-graph {
     background-color: #0a0a0a;
 }
+
+.custom-tab:hover {
+    background-color: rgb(21, 100, 165) !important;
+    transition: background-color 0.3s ease !important;
+    color: #ffffff;
+}

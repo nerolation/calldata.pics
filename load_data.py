@@ -111,5 +111,6 @@ print("blob_for_rollup.pickle loaded")
 with open(CHART_LOC+"blobs_fee_over_time.pickle", "rb") as file:
     blobs_fee_over_time = pickle.load(file)
 print("blobs_fee_over_time.pickle loaded")
-
+with open(CHART_LOC+'last_updated.txt', 'r') as f:
+    last_updated = f.read().strip()
     
