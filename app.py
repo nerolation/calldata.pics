@@ -1,6 +1,7 @@
 import dash
 from dash import html, dcc, dash_table
 import plotly.graph_objs as go
+import plotly.express as px
 import pandas as pd
 from datetime import datetime, timedelta
 from dash.dependencies import Input, Output, State
@@ -48,6 +49,35 @@ card_content_30q_ratio = create_card("30% of transactions calldata size", f'have
 card_content_50q_ratio = create_card("50% of transactions calldata size", f'have less than {calldatatxs["percentile05"].iloc[0]+1:,.0f} bytes')
 card_content_70q_ratio = create_card("70% of transactions calldata size", f'have less than {calldatatxs["percentile07"].iloc[0]+1:,.0f} bytes')
 card_content_90q_ratio = create_card("90% of transactions calldata size", f'have less than {calldatatxs["percentile09"].iloc[0]+1:,.0f} bytes')
+
+card_content_total_blobs = create_card(
+    "Total Blobs (last 24h)", 
+    f"{blob_summary_data['Total Blobs']} " + f"({blob_summary_data['delta_total']}%" + (" ⬆️)" if int(blob_summary_data["delta_total"]) > 0 else " ⬇️)")
+)
+
+card_content_total_blobs_in_gib = create_card(
+    "Total Blobs in GiB (last 24h)", 
+    f"{blob_summary_data['Total Blobs in GB']} " + f"({blob_summary_data['delta_total_gb']}%" + (" ⬆️)" if int(blob_summary_data["delta_total_gb"]) > 0 else " ⬇️)")
+)
+
+card_content_avg_blob_per_slot = create_card(
+    "Avg. #Blobs Per Slot (last 24h)", 
+    f"{blob_summary_data['Avg. #Blobs Per Slot']} " + f"({blob_summary_data['delta_avg']}%" + (" ⬆️)" if int(blob_summary_data["delta_avg"]) > 0 else " ⬇️)")
+)
+
+card_content_avg_blob_price = create_card(
+    "Avg. Blob Gas Price (last 24h)", 
+    f"{blob_summary_data['Avg. Blob Gas Price']} " + f"({blob_summary_data['delta_price']}%" + (" ⬆️)" if int(blob_summary_data["delta_price"]) > 0 else " ⬇️)")
+)
+
+
+row_blob = create_row([
+    card_content_total_blobs, 
+    card_content_total_blobs_in_gib,
+    card_content_avg_blob_per_slot,
+    card_content_avg_blob_price
+])
+
 
 row_1 = create_row([
     card_content_avg_gas_used, 
@@ -107,6 +137,8 @@ cards5 = html.Div([row_6], style={'padding-top': '20px', 'marginLeft': '1vw', 'm
 cards51 = html.Div([row_61], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
 cards6 = html.Div([row_7], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
 
+cards_blobs_0 =  html.Div([row_blob], style={'padding-top': '0px', 'marginLeft': '1vw', 'marginRight': '1vw', 'marginBottom': '6vw'})
+
 
 entity_table = dash_table.DataTable(
     id='table',
@@ -138,12 +170,113 @@ entity_table = dash_table.DataTable(
     # page_size=12,
 )
 
+entity_table_blobs = dash_table.DataTable(
+    id='table',
+    columns=[{"name": i, "id": i} for i in entities_blob_summary.columns],
+    data=entities_blob_summary.to_dict('records'),
+    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"5vh"},
+    style_cell={
+        'color': 'white',
+        'backgroundColor': 'black',
+        'border': 'none'
+    },
+    style_header={
+        'backgroundColor': '#222',
+        'fontWeight': 'bold',
+        'color': 'white',
+        'border': 'none'
+    },
+    style_data_conditional=[
+        {
+            'if': {'row_index': 'odd'},
+            'backgroundColor': '#303030'
+        },
+        {
+            'if': {'row_index': 'even'},
+            'backgroundColor': 'black'
+        }
+    ],
+    # Uncomment if pagination is needed
+    # page_size=12,
+)
+
+
+def generate_blob_data_content():
+    content = html.Div(
+        [
+            dbc.Row(entity_table_blobs),
+            html.Div(
+                [
+                    html.H4("Blob per Entity"),
+                    dcc.Graph(
+                        figure=blobentities_over_time,
+                        style={"marginBottom": "0vh"},
+                        config={"displayModeBar": False},
+                    ),
+                ],
+                style={"width": "100%", "marginBottom": "0vh"},
+            ),
+            cards_blobs_0,
+            
+            dbc.Row(
+                [
+                    dbc.Col(
+                        html.Div(
+                            [
+                                html.H4("Cumulative Nr. of Blobs"),
+                                dcc.Graph(
+                                    figure=blobs_over_time,
+                                    style={"marginBottom": "10vh"},
+                                    config={"displayModeBar": False},
+                                ),
+                            ],
+                            style={"width": "100%", "marginBottom": "1vh"},
+                        ),
+                        width=12,
+                        md=6,
+                    ),
+                    dbc.Col(
+                        html.Div(
+                            [
+                                html.H4("Blob Share (last 7 days)"),
+                                dcc.Graph(
+                                    id="daily-transactions3",
+                                    figure=entity_calldata_blob,
+                                    className="graph-container",
+                                    config={"displayModeBar": False},
+                                ),
+                            ]
+                        ),
+                        width=12,
+                        md=6,
+                    ),
+                ],
+                style={"width": "100%", "marginBottom": "1vh"},
+            ),
+            
+            
+            html.Div(
+                [
+                    html.H4("Blobs over Slots in Epoch"),
+                    dcc.Graph(
+                        figure=blob_for_rollup,
+                        style={"marginBottom": "10vh"},
+                        config={"displayModeBar": False},
+                    ),
+                ],
+                style={"width": "100%", "marginBottom": "10vh"},
+            ),       
+        ],
+    )
+    return content
+
+
 def generate_rollup_data_content():
     content = html.Div(
         [
             html.Div(
                 [
-                    html.H2("Daily Calldata Usage Per Entity"),
+                    html.H4("Daily Calldata Usage Per Entity"),
                     dcc.Graph(
                         figure=calldataentities_over_time,
                         style={"marginBottom": "10vh"},
@@ -154,7 +287,7 @@ def generate_rollup_data_content():
             ),
             html.Div(
                 [
-                    html.H2("Calldata Posting Over Slot in Epoch (last 30 days)"),
+                    html.H4("Calldata Posting Over Slot in Epoch (last 30 days)"),
                     dcc.Graph(
                         figure=rollupslot,
                         style={"marginBottom": "10vh"},
@@ -194,7 +327,7 @@ def generate_calldata_data_content():
     content = dcc.Loading([
             html.Div(
                 [
-                    html.H2("Calldata Used Per Day"),
+                    html.H4("Calldata Used Per Day"),
                     dcc.Graph(figure=cumulative_data_over_time, config={"displayModeBar": False}),
                     cards3,
                 ],
@@ -206,7 +339,7 @@ def generate_calldata_data_content():
             ),
             html.Div(
                 [
-                    html.H2("Average and Max. Calldata Usage Over Time"),
+                    html.H4("Average and Max. Calldata Usage Over Time"),
                     dcc.Graph(figure=calldataovertime, config={"displayModeBar": False}),
                     cards6,
                 ],
@@ -283,7 +416,7 @@ def generate_historic_data_content():
                         children=[
                             html.Div(
                                 [
-                                    html.H2("Gas Usage Per Day"),
+                                    html.H4("Gas Usage Per Day"),
                                     dcc.Graph(figure=gas_used_over_time, config={"displayModeBar": False}),
                                     cards0,
                                 ],
@@ -297,7 +430,7 @@ def generate_historic_data_content():
                     dcc.Loading(
                         html.Div(
                             [
-                                html.H2("Snappy Compressed Beacon Block Size over Time"),
+                                html.H4("Snappy Compressed Beacon Block Size over Time"),
                                 dcc.Graph(figure=beaconblock_over_time, config={"displayModeBar": False}),
                                 cards4,
                             ],
@@ -311,7 +444,7 @@ def generate_historic_data_content():
                     dcc.Loading(
                         html.Div(
                             [
-                                html.H2("Snappy Compressed Beacon Block Size over Time"),
+                                html.H4("Snappy Compressed Beacon Block Size over Time"),
                                 dcc.Graph(figure=maxblockvsavg, config={"displayModeBar": False}),
                                 cards4,
                             ],
@@ -322,7 +455,7 @@ def generate_historic_data_content():
                             },
                         )
                     ),
-                    html.H2("Beacon Block Components"),
+                    html.H4("Beacon Block Components"),
                     dcc.Graph(
                         id="beaconblock_el_share",
                         figure=beaconblock,
@@ -354,6 +487,16 @@ spinner = html.Div(
     ],
     id="loadingspinner", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
 )
+
+spinner1 = html.Div(
+    children=[
+        dbc.Spinner(spinner_style={"width": "3rem", "height": "3rem"}), 
+        html.Span(["       "], style={"paddingRight":"1vw"}),
+        "Loading..."
+    ],
+    id="loadingspinner1", style={'display': 'flex', 'justifyContent': 'center', 'alignItems': 'center', "paddingTop": "3vh"}
+)
+
 
 
 spinner2 = html.Div(
@@ -427,6 +570,7 @@ app.layout = html.Div(
         html.H1("Calldata.pics", style={"textAlign": "center", "marginBottom": "2vh", "marginTop": "2vh"}),
         dcc.Store(id="timezone-store"),
         dcc.Store(id="stored-data"),
+        dcc.Store(id="stored-data2"),
         html.Div([], className="mobilespace"),
         dcc.Interval(
             id="interval-timezone-update", interval=3600 * 1000, n_intervals=0
@@ -443,6 +587,12 @@ app.layout = html.Div(
                             id="timezone-display",
                             children=[html.P("Time zone: ")],
                             style={"margin-top": "2vh"},
+                        ),
+                        html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
+                        dcc.Graph(
+                            id="live-blob-chart",
+                            style={"margin-bottom": "5vh", "height": "40vh"},
+                            config={"displayModeBar": False},
                         ),
                         html.H2("Live Block Size", style={"margin-top": "5vh"}),
                         dcc.Graph(
@@ -492,6 +642,16 @@ app.layout = html.Div(
                     selected_style=tab_selected_style
                 ),
                 dcc.Tab(
+                    label='Blob Data', 
+                    value='tab-blob', 
+                    children=[
+                        spinner1,
+                        html.Div(id='blob-data-content')
+                    ], 
+                    style=tab_style, 
+                    selected_style=tab_selected_style
+                ),
+                dcc.Tab(
                     label='Rollups/L2s', 
                     value='tab-3', 
                     children=[
@@ -518,6 +678,66 @@ app.layout = html.Div(
     style={"marginLeft": "1vw"},
 )
 
+
+def generate_live_blobs_per_entity_chart(_df):
+    df = _df.copy()
+    df['entity_id'] = df['entity'].astype('category').cat.codes
+    df['size'] = df['nr_blobs'] * 1  # Scale factor for bubble size
+    fig = px.scatter(df, x='time', y='entity_id', size='size', color='entity', hover_name='entity',
+                     size_max=10, title='Blobs Posted to Ethereum Mainnet Over Time', custom_data="size"
+    )
+    hovertext = '%{y}: %{customdata[0]:,.0f} blobs<extra></extra>'
+    fig.update_traces(hovertemplate=hovertext)
+    fig.update_yaxes(tickvals=df['entity_id'], ticktext=df['entity'])
+    #ticks = list(range(df['slot'].min() - df['slot'].min()%32, df['slot'].max()))
+    #if len(ticks) > 32*2:
+    #    ticks =  ticks[::32] + list(range(ticks[-32], ticks[-1])) + [ticks[-1] + 2]
+    #    ticktext = [i//32 for i in list(range(df['slot'].min() - df['slot'].min()%32 + 32, df['slot'].max(), 32))]
+    #    ticktext = ticktext + [str(i) for i in list(range(ticks[-32], ticks[0]))]
+    #else:
+    #    ticks = ticks[::2] + [ticks[-1] + 2]
+    #    ticktext = [f"{i:,}" for i in ticks]
+    
+    fig.update_layout(
+        title=None,
+        xaxis_title="Slot/Epochs",
+        yaxis_title=None,
+        margin={"t": 0, "b": 50, "r": 50, "l": 50},
+        dragmode=False,
+        plot_bgcolor="#0a0a0a",
+        paper_bgcolor="#0a0a0a",
+        font=dict(
+            color="white",
+            size=16
+        ),
+        legend=dict(
+            yanchor="top",
+            y=1,
+            xanchor="left",
+            x=0.91,
+            bgcolor='rgba(10, 10, 10, 0)',
+            font=dict(
+                color="white",
+                size=16
+            ),
+        ),
+        showlegend=False,
+        hovermode="closest",
+        xaxis=dict(
+            fixedrange=True,
+            gridcolor="rgba(255, 255, 255, 0.5)",
+            #tickvals = ticks,
+            #ticktext = ticktext
+        ),
+        yaxis=dict(
+            fixedrange=True,
+            gridcolor="rgba(255, 255, 255, 0.5)"
+        ),
+    )
+    return fig
+
+
+
 app.clientside_callback(
     """
     function(n_intervals) {
@@ -534,41 +754,61 @@ app.clientside_callback(
     Output('live-bubble-chart3', 'figure'),
     Output('live-bubble-chart4', 'figure'),
     Output('live-bubble-chart5', 'figure'),
+    Output('live-blob-chart', 'figure'),
     Output('stored-data', 'data'),
+    Output('stored-data2', 'data'),
     Output('timezone-display', 'children'),
 ], [
     Input('interval-component', 'n_intervals'),
     State('timezone-store', 'data'),
-    State('stored-data', 'data')]
+    State('stored-data', 'data'),
+    State('stored-data2', 'data')]
 )
-def update_line_chart(n, tz_info, stored_data):
+def update_line_chart(n, tz_info, stored_data, stored_data2):
     df = pd.DataFrame() if n == 0 or stored_data is None else pd.DataFrame.from_records(stored_data)
+    df_blobs = pd.DataFrame(columns=["slot", "time"]) if n == 0 or stored_data2 is None else pd.DataFrame.from_records(stored_data2)
     if (n == 0 or stored_data is None or n % (MAX_BLOCKS_TO_FETCH - 25) == 0) and n <= 600:
         #print("extending data")
         _df = read_table_from_heroku("blocks")
+        _df_blobs = read_table_from_heroku("blobs", "*", "slot")
         _df = prep_livedata(_df)
+        _df_blobs = prepare_blob_data(_df_blobs)
         df = pd.concat([df, _df], ignore_index=True).drop_duplicates()
+        df_blobs = pd.concat([df_blobs, _df_blobs], ignore_index=True).drop_duplicates()
         stored_data = df.to_dict('records')
+        stored_data2 = df_blobs.to_dict('records')
     elif stored_data is None:
         raise PreventUpdate
-        
+    
+    SHOW_INITIALLY = 25
     user_timezone = tz_info if tz_info else 'UTC'
     df['time'] = pd.to_datetime(df['time'])
+    df_blobs['time'] = pd.to_datetime(df_blobs['time'])
     
     if df['time'].dt.tz is None:
         df['time'] = pd.to_datetime(df['time']).dt.tz_localize('UTC').dt.tz_convert(user_timezone)
+        df_blobs['time'] = pd.to_datetime(df_blobs['time']).dt.tz_localize('UTC').dt.tz_convert(user_timezone)
     else:
         df['time'] = df['time'].dt.tz_convert(user_timezone)
+        df_blobs['time'] = df_blobs['time'].dt.tz_convert(user_timezone)
     timezone_text = f"Time zone: {tz_info}"
-    block_size_compressed = df.iloc[0:n+25]["size_compressed"]/1024**2
-    el_block_size_compressed = df.iloc[0:n+25]["el_size_compressed"]/1024**2
-    block_size_nc = df.iloc[0:n+25]["size"]/1024**2
-    calldata_zeros = df.iloc[0:n+25]["calldatazeros"]/1024**2
-    calldata_nonzeros = df.iloc[0:n+25]["calldatanonzeros"]/1024**2
-    nr_blobs = df.iloc[0:n+25]["nr_blobs"] * 128/1024
-    gas_usage = df.iloc[0:n+25]["gas_used"]
-    days = df.iloc[0:n+25]["time"]
-    slots = df.iloc[0:n+25]["slot"]
+    block_size_compressed = df.iloc[0:n+SHOW_INITIALLY]["size_compressed"]/1024**2
+    el_block_size_compressed = df.iloc[0:n+SHOW_INITIALLY]["el_size_compressed"]/1024**2
+    block_size_nc = df.iloc[0:n+SHOW_INITIALLY]["size"]/1024**2
+    calldata_zeros = df.iloc[0:n+SHOW_INITIALLY]["calldatazeros"]/1024**2
+    calldata_nonzeros = df.iloc[0:n+SHOW_INITIALLY]["calldatanonzeros"]/1024**2
+    nr_blobs = df.iloc[0:n+SHOW_INITIALLY]["nr_blobs"] * 128/1024
+    gas_usage = df.iloc[0:n+SHOW_INITIALLY]["gas_used"]
+    days = df.iloc[0:n+SHOW_INITIALLY]["time"]
+    slots = df.iloc[0:n+SHOW_INITIALLY]["slot"]
+
+    
+    blobs_to_show = df_blobs[df_blobs["slot"].isin(slots)]
+    if len(blobs_to_show.index) > 0:
+        figure_blobs = generate_live_blobs_per_entity_chart(blobs_to_show)
+    else:
+        figure_blobs = go.Figure()
+    
     figure = go.Figure(data=[go.Scatter(
         x=days,
         y=block_size_compressed,
@@ -802,11 +1042,19 @@ def update_line_chart(n, tz_info, stored_data):
         mode='lines+markers',
         fillcolor='rgba(255, 127, 14, 0.6)', line_color='rgba(255, 127, 14, 0.6)',
         line_width=4,
-        name="Zero-Bytes",
+        name="Blobs",
         customdata=slots,
         hovertemplate='Slot: %{customdata:,}<br>Zero-Bytes: %{y:.2f} MB<extra></extra>',
 
     )])
+    figure5.add_trace(go.Scatter(
+        x=days,
+        y=[3*128/1024]*len(days),
+        mode='lines',
+        line=dict(color='red', dash='longdash', width=2),
+        hovertemplate='Blob Target: %{y:.2f} MB<extra></extra>',
+        name='Blob Target'
+    ))
     figure5.update_layout(
         title=None,
         xaxis_title="Time",
@@ -840,7 +1088,7 @@ def update_line_chart(n, tz_info, stored_data):
             gridcolor="rgba(255, 255, 255, 0.5)"
         ),
     )
-    return figure, figure2, figure3, figure4, figure5, stored_data, html.H5(timezone_text)
+    return figure, figure2, figure3, figure4, figure5, figure_blobs, stored_data, stored_data2, html.H5(timezone_text)
 
 
 @app.callback(
@@ -848,21 +1096,25 @@ def update_line_chart(n, tz_info, stored_data):
         Output('historic-data-content', 'children'),
         Output('rollup-data-content', 'children'),
         Output('calldata-data-content', 'children'),
+        Output('blob-data-content', 'children'),
         Output('loadingspinner', 'children'),
         Output('loadingspinner2', 'children'),
-        Output('loadingspinner3', 'children')
+        Output('loadingspinner3', 'children'),
+        Output('loadingspinner1', 'children')
     ], [   
         Input('tabs', 'value')
     ]
 )
 def update_tab_content(selected_tab):
     if selected_tab == 'tab-2':
-        return generate_historic_data_content(), [], [], [], [], []
+        return generate_historic_data_content(), [], [], [], [], [], [], []
     if selected_tab == 'tab-3':
-        return [], generate_rollup_data_content(), [], [], [], []
+        return [], generate_rollup_data_content(), [], [], [], [], [], []
     if selected_tab == 'tab-4':
-        return [], [], generate_calldata_data_content(), [], [], []
-    return [], [], [], spinner, spinner2, spinner3
+        return [], [], generate_calldata_data_content(), [], [], [], [], []
+    if selected_tab == 'tab-blob':
+        return [], [], [], generate_blob_data_content(), [], [], [], []
+    return [], [], [], [], spinner, spinner2, spinner3, spinner1
 
 
 if __name__ == '__main__':

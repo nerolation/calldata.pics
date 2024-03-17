@@ -18,7 +18,12 @@ chart_filenames = [
     "calldataentities_over_time.pickle",
     "fields4.pickle",
     "entity_pie.pickle",
-    "maxblockvsavg.pickle"
+    "maxblockvsavg.pickle",
+    "blobs_over_time.pickle",
+    "entity_calldata_blob.pickle",
+    "blobentities_over_time.pickle",
+    "blob_for_rollup.pickle",
+    "blobs_fee_over_time.pickle"
 ]
 
 # Function to print file sizes in MB
@@ -33,9 +38,13 @@ def print_file_sizes(filenames):
 # Call the function
 print_file_sizes(chart_filenames)
 print("----------------------------------------------")
-avgs = pd.read_parquet("averages.parquet")
-calldatatxs = pd.read_parquet("calldatatxs.parquet")
-entities_calldata_summary = pd.read_parquet("entities_calldata_summary.parquet")
+avgs = pd.read_parquet(CHART_LOC+"averages.parquet")
+calldatatxs = pd.read_parquet(CHART_LOC+"calldatatxs.parquet")
+entities_calldata_summary = pd.read_parquet(CHART_LOC+"entities_calldata_summary.parquet")
+entities_blob_summary = pd.read_parquet(CHART_LOC+"entities_blob_summary.parquet")
+blob_summary_data = pd.read_csv(CHART_LOC+"blob_summary_data.csv").to_dict('records')[0]
+
+
 with open(CHART_LOC+"gasusageperday.pickle", "rb") as file:
     gasuageperday = pickle.load(file)
 print("gasusageperday.pickle loaded")
@@ -87,5 +96,20 @@ print("zeros_ratio.txt loaded")
 with open(CHART_LOC+"calldata_summary.csv", "r") as file:
     calldata_summary = file.read().split(",")
 print("calldata_summary.csv loaded")
+with open(CHART_LOC+"blobs_over_time.pickle", "rb") as file:
+    blobs_over_time = pickle.load(file)
+print("blobs_over_time.pickle loaded")
+with open(CHART_LOC+"entity_calldata_blob.pickle", "rb") as file:
+    entity_calldata_blob = pickle.load(file)
+print("entity_calldata_blob.pickle loaded")
+with open(CHART_LOC+"blobentities_over_time.pickle", "rb") as file:
+    blobentities_over_time = pickle.load(file)
+print("blobentities_over_time.pickle loaded")
+with open(CHART_LOC+"blob_for_rollup.pickle", "rb") as file:
+    blob_for_rollup = pickle.load(file)
+print("blob_for_rollup.pickle loaded")
+with open(CHART_LOC+"blobs_fee_over_time.pickle", "rb") as file:
+    blobs_fee_over_time = pickle.load(file)
+print("blobs_fee_over_time.pickle loaded")
 
     
