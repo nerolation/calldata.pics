@@ -25,7 +25,10 @@ import logging
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY],
+               meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=0.1"}
+    ])
 
 card_content_calldatasum_median = create_card("Median Calldata Per Block", f"{calldata_summary[0]} MB")
 card_content_calldatasum_mean = create_card("Mean Calldata Per Block", f"{calldata_summary[1]} MB")
@@ -207,14 +210,14 @@ def generate_blob_data_content():
             dbc.Row(entity_table_blobs),
             html.Div(
                 [
-                    html.H4("Blob per Entity"),
+                    html.H4("Blobs per Entity"),
                     dcc.Graph(
                         figure=blobentities_over_time,
                         style={"marginBottom": "0vh"},
                         config={"displayModeBar": False},
                     ),
                 ],
-                style={"width": "100%", "marginBottom": "0vh"},
+                style={"width": "100%", "marginBottom": "0vh", "marginTop": "5vh"},
             ),
             cards_blobs_0,
             
@@ -232,8 +235,8 @@ def generate_blob_data_content():
                             ],
                             style={"width": "100%", "marginBottom": "1vh"},
                         ),
-                        width=12,
-                        md=6,
+                        #width=12,
+                        #md=6,
                     ),
                     dbc.Col(
                         html.Div(
@@ -247,8 +250,8 @@ def generate_blob_data_content():
                                 ),
                             ]
                         ),
-                        width=12,
-                        md=6,
+                        #width=12,
+                        #md=6,
                     ),
                 ],
                 style={"width": "100%", "marginBottom": "1vh"},
@@ -522,6 +525,7 @@ app.index_string = '''
 <!DOCTYPE html>
 <html>
     <head>
+<meta name="viewport" content="width=device-width, initial-scale=0.1">
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZS0X24WZTE"></script>
         <script>
