@@ -542,7 +542,7 @@ app.index_string = '''
         <meta property="og:url" content="calldata.pics">
         <meta property="og:description" content="Insights into block sizes and calldata usage on Ethereum.">
         <meta property="og:type" content="website">
-        <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/calldatapics_og_image.jpg">
+        <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/calldatagames_og_image.jpg">
         <meta name="description" content="Insights into block sizes and calldata usage on Ethereum.">
         <meta name="keywords" content="Ethereum, Calldata, DotPics, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
@@ -562,12 +562,21 @@ app.index_string = '''
 </html>
 '''
 
+#app.scripts.append_script({"external_url": "update_window_width.js"})
+app.clientside_callback(
+    "window.dash_clientside.update_window_size",
+    Output('window-size-store', 'data'),
+    Input('window-size-trigger', 'n_intervals')
+)
+
 app.title = 'Calldata.pics'
 server = app.server
 
 app.layout = html.Div(
     [
         html.H1("Calldata.pics", style={"textAlign": "center", "marginBottom": "2vh", "marginTop": "2vh"}),
+        dbc.Row(dcc.Interval(id='window-size-trigger', interval=1000, n_intervals=0, max_intervals=1)),
+        dcc.Store(id='window-size-store', data={'width': None}),
         dcc.Store(id="timezone-store"),
         dcc.Store(id="stored-data"),
         dcc.Store(id="stored-data2"),
@@ -709,7 +718,7 @@ app.layout = html.Div(
 )
 
 
-def generate_live_blobs_per_entity_chart(_df):
+def generate_live_blobs_per_entity_chart(_df, _font_size_delta):
     df = _df.copy()
     df['entity_id'] = df['entity'].astype('category').cat.codes
     df['size'] = df['nr_blobs'] * 1  # Scale factor for bubble size
@@ -738,7 +747,7 @@ def generate_live_blobs_per_entity_chart(_df):
         paper_bgcolor="#0a0a0a",
         font=dict(
             color="white",
-            size=16
+            size=16-_font_size_delta
         ),
         legend=dict(
             yanchor="top",
@@ -748,7 +757,7 @@ def generate_live_blobs_per_entity_chart(_df):
             bgcolor='rgba(10, 10, 10, 0)',
             font=dict(
                 color="white",
-                size=16
+                size=16-_font_size_delta
             ),
         ),
         showlegend=False,
@@ -793,9 +802,11 @@ app.clientside_callback(
     Input('interval-component', 'n_intervals'),
     State('timezone-store', 'data'),
     State('stored-data', 'data'),
-    State('stored-data2', 'data')]
+    State('stored-data2', 'data'),
+    Input('window-size-store', 'data')]
 )
-def update_line_chart(n, tz_info, stored_data, stored_data2):
+def update_line_chart(n, tz_info, stored_data, stored_data2, size_data): 
+    width = size_data['width']
     df = pd.DataFrame() if n == 0 or stored_data is None else pd.DataFrame.from_records(stored_data)
     df_blobs = pd.DataFrame(columns=["slot", "time"]) if n == 0 or stored_data2 is None else pd.DataFrame.from_records(stored_data2)
     last_updated_new = last_updated
@@ -835,12 +846,19 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
     days = df.iloc[0:n+SHOW_INITIALLY]["time"]
     slots = df.iloc[0:n+SHOW_INITIALLY]["slot"]
 
-    
+    if width <= 800:
+        _font_size_delta = 4
+    else:
+        _font_size_delta = 0
+        
     blobs_to_show = df_blobs[df_blobs["slot"].isin(slots)]
     if len(blobs_to_show.index) > 0:
-        figure_blobs = generate_live_blobs_per_entity_chart(blobs_to_show)
+        figure_blobs = generate_live_blobs_per_entity_chart(blobs_to_show, _font_size_delta)
     else:
         figure_blobs = go.Figure()
+        
+    
+        
     
     figure = go.Figure(data=[go.Scatter(
         x=days,
@@ -882,7 +900,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
         margin={"t": 0, "b": 0, "r": 50, "l": 50},
         font=dict(
             color="white",
-            size=16
+            size=16-_font_size_delta
         ),
         legend=dict(
             yanchor="top",
@@ -892,7 +910,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
             bgcolor='rgba(10, 10, 10, 0)',
             font=dict(
                 color="white",
-                size=16
+                size=16-_font_size_delta
             ),
         ),
         hovermode="x unified",
@@ -936,7 +954,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
         paper_bgcolor="#0a0a0a",
         font=dict(
             color="white",
-            size=16
+            size=16-_font_size_delta
         ),
         legend=dict(
             yanchor="top",
@@ -946,7 +964,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
             bgcolor='rgba(10, 10, 10, 0)',
             font=dict(
                 color="white",
-                size=16
+                size=16-_font_size_delta
             ),
         ),
         hovermode="x unified",
@@ -992,7 +1010,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
         paper_bgcolor="#0a0a0a",
         font=dict(
             color="white",
-            size=16
+            size=16-_font_size_delta
         ),
         legend=dict(
             yanchor="top",
@@ -1002,7 +1020,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
             bgcolor='rgba(10, 10, 10, 0)',
             font=dict(
                 color="white",
-                size=16
+                size=16-_font_size_delta
             ),
         ),
         hovermode="x unified",
@@ -1045,7 +1063,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
         paper_bgcolor="#0a0a0a",
         font=dict(
             color="white",
-            size=16
+            size=16-_font_size_delta
         ),
         legend=dict(
             yanchor="top",
@@ -1055,7 +1073,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
             bgcolor='rgba(10, 10, 10, 0)',
             font=dict(
                 color="white",
-                size=16
+                size=16-_font_size_delta
             ),
         ),
         dragmode=False,
@@ -1097,7 +1115,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
         paper_bgcolor="#0a0a0a",
         font=dict(
             color="white",
-            size=16
+            size=16-_font_size_delta
         ),
         legend=dict(
             yanchor="top",
@@ -1107,7 +1125,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2):
             bgcolor='rgba(10, 10, 10, 0)',
             font=dict(
                 color="white",
-                size=16
+                size=16-_font_size_delta
             ),
         ),
         dragmode=False,
