@@ -27,7 +27,7 @@ logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY],
                meta_tags=[
-        {"name": "viewport", "content": "width=device-width, initial-scale=0.1"}
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
     ])
 
 card_content_calldatasum_median = create_card("Median Calldata Per Block", f"{calldata_summary[0]} MB")
@@ -525,7 +525,7 @@ app.index_string = '''
 <!DOCTYPE html>
 <html>
     <head>
-<meta name="viewport" content="width=device-width, initial-scale=0.1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZS0X24WZTE"></script>
         <script>
