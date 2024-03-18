@@ -25,10 +25,7 @@ import logging
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY],
-               meta_tags=[
-        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
-    ])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.themes.DARKLY])
 
 card_content_calldatasum_median = create_card("Median Calldata Per Block", f"{calldata_summary[0]} MB")
 card_content_calldatasum_mean = create_card("Mean Calldata Per Block", f"{calldata_summary[1]} MB")
@@ -525,7 +522,6 @@ app.index_string = '''
 <!DOCTYPE html>
 <html>
     <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZS0X24WZTE"></script>
         <script>
@@ -606,105 +602,108 @@ app.layout = html.Div(
         dcc.Interval(
             id="interval-timezone-update", interval=3600 * 1000, n_intervals=0
         ),
-        dcc.Tabs(
-            id="tabs",
-            value="tab-1",
-            children=[
-                dcc.Tab(
-                    label="Live Data",
-                    value="tab-1",
-                    children=[
-                        html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
-                        dcc.Graph(
-                            id="live-blob-chart",
-                            style={"margin-bottom": "5vh", "height": "40vh"},
-                            config={"displayModeBar": False},
-                        ),
-                        html.H2("Live Block Size", style={"margin-top": "5vh"}),
-                        dcc.Graph(
-                            id="live-bubble-chart",
-                            style={"margin-bottom": "5vh", "height": "40vh"},
-                            config={"displayModeBar": False},
-                        ),
-                        dcc.Interval(
-                            id="interval-component", interval=2000, n_intervals=0
-                        ),
-                        html.H2("Live Gas Usage"),
-                        dcc.Graph(
-                            id="live-bubble-chart2",
-                            style={"margin-bottom": "5vh", "height": "40vh"},
-                            config={"displayModeBar": False},
-                        ),
-                        html.H2("Beacon Block Compression (Snappy)"),
-                        dcc.Graph(
-                            id="live-bubble-chart3",
-                            style={"margin-bottom": "5vh", "height": "40vh"},
-                            config={"displayModeBar": False},
-                        ),
-                        html.H2("Live Calldata Usage", style={"margin-top": "5vh"}),
-                        dcc.Graph(
-                            id="live-bubble-chart4",
-                            style={"margin-bottom": "5vh", "height": "40vh"},
-                            config={"displayModeBar": False},
-                        ),
-                        html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
-                        dcc.Graph(
-                            id="live-bubble-chart5",
-                            style={"margin-bottom": "5vh", "height": "40vh"},
-                            config={"displayModeBar": False},
-                        ),
-                    ],
-                    style=tab_style,
-                    selected_style=tab_selected_style,
-                    className='custom-tab'
-                ),
-                dcc.Tab(
-                    label='Historic Size Data', 
-                    value='tab-2', 
-                    children=[
-                        spinner,
-                        html.Div(id='historic-data-content')
-                    ], 
-                    style=tab_style, 
-                    selected_style=tab_selected_style,
-                    className='custom-tab'
-                ),
-                dcc.Tab(
-                    label='Blob Data', 
-                    value='tab-blob', 
-                    children=[
-                        spinner1,
-                        html.Div(id='blob-data-content')
-                    ], 
-                    style=tab_style, 
-                    selected_style=tab_selected_style,
-                    className='custom-tab'
-                ),
-                dcc.Tab(
-                    label='Rollups/L2s', 
-                    value='tab-3', 
-                    children=[
-                        spinner2,
-                        html.Div(id='rollup-data-content')
-                    ], 
-                    style=tab_style, 
-                    selected_style=tab_selected_style,
-                    className='custom-tab'
-                ),
-                dcc.Tab(
-                    label='Calldata', 
-                    value='tab-4', 
-                    children=[
-                        spinner3,
-                        html.Div(id='calldata-data-content')
-                    ], 
-                    style=tab_style, 
-                    selected_style=tab_selected_style,
-                    className='custom-tab'
-                ),
-            ],
-            style=tabs_styles,
-        ),
+        html.Div([
+            dcc.Tabs(
+                id="tabs",
+                value="tab-1",
+                children=[
+                    dcc.Tab(
+                        label="Live Data",
+                        value="tab-1",
+                        children=[
+                            html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
+                            dcc.Graph(
+                                id="live-blob-chart",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
+                            html.H2("Live Block Size", style={"margin-top": "5vh"}),
+                            dcc.Graph(
+                                id="live-bubble-chart",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
+                            dcc.Interval(
+                                id="interval-component", interval=2000, n_intervals=0
+                            ),
+                            html.H2("Live Gas Usage"),
+                            dcc.Graph(
+                                id="live-bubble-chart2",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
+                            html.H2("Beacon Block Compression (Snappy)"),
+                            dcc.Graph(
+                                id="live-bubble-chart3",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
+                            html.H2("Live Calldata Usage", style={"margin-top": "5vh"}),
+                            dcc.Graph(
+                                id="live-bubble-chart4",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
+                            html.H2("Live Blob Usage", style={"margin-top": "5vh"}),
+                            dcc.Graph(
+                                id="live-bubble-chart5",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
+                        ],
+                        style={},
+                        selected_className='tab-selected-style',
+                        className='tab-style custom-tab'
+                    ),
+                    dcc.Tab(
+                        label='Historic Size Data', 
+                        value='tab-2', 
+                        children=[
+                            spinner,
+                            html.Div(id='historic-data-content')
+                        ], 
+                        style={},
+                        selected_className='tab-selected-style',
+                        className='tab-style custom-tab'
+                    ),
+                    dcc.Tab(
+                        label='Blob Data', 
+                        value='tab-blob', 
+                        children=[
+                            spinner1,
+                            html.Div(id='blob-data-content')
+                        ], 
+                        style={},
+                        selected_className='tab-selected-style',
+                        className='tab-style custom-tab'
+                    ),
+                    dcc.Tab(
+                        label='Rollups/L2s', 
+                        value='tab-3', 
+                        children=[
+                            spinner2,
+                            html.Div(id='rollup-data-content')
+                        ], 
+                        style={},
+                        selected_className='tab-selected-style',
+                        className='tab-style custom-tab'
+                    ),
+                    dcc.Tab(
+                        label='Calldata', 
+                        value='tab-4', 
+                        children=[
+                            spinner3,
+                            html.Div(id='calldata-data-content')
+                        ], 
+                        style={},
+                        selected_className='tab-selected-style',
+                        className='tab-style custom-tab'
+                    ),
+                ],
+                style={},
+                className="tabs-styles",
+            )
+        ], style={}, className="tab-container"),
     ],
     style={"marginLeft": "1vw"},
 )

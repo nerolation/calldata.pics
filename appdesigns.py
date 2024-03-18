@@ -1,8 +1,15 @@
 tabs_styles = {
     'height': '44px',
     'alignItems': 'center',
+    "display": "inlineFlex",
+    'width': 'auto', 
+    
 }
 tab_style = {
+    'flex-grow': '1',  # Allows the tab to grow as needed, remove or adjust as necessary
+    'display': 'inline-flex',  
+    'flex-wrap': 'wrap',
+    'width': 'auto', 
     'border': '2px solid #d6d6d6',
     'padding': '6px',
     'marginLeft': '1vw',
@@ -14,6 +21,7 @@ tab_style = {
 }
 
 tab_selected_style = {
+    "width": "auto",
     'border': '2px solid #d6d6d6',
     'backgroundColor': 'rgb(21, 100, 165)',
     'fontSize': '17px',

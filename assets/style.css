@@ -18,16 +18,6 @@ body {
         margin-bottom: 0vh;
     }
 
-@media (max-width: 768px) {
-    .graph-container {
-        width: 100%;
-    }
-    .mobilespace {
-        margin-bottom: 2vh;
-    }
-}
-
-
 h1, h2 {
     color: #ffffff;
 }
@@ -41,3 +31,58 @@ h1, h2 {
     transition: background-color 0.3s ease !important;
     color: #ffffff;
 }
+
+
+.tabs-styles {
+    height: 44px !important;
+    align-items: center !important;
+    width: auto !important;
+    -webkit-flex-direction: row !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+}
+.tab-style {
+    width: auto !important;
+    border: 2px solid #d6d6d6 !important;
+    padding: 6px !important;
+    margin-left: 1vw !important;
+    margin-right: 1vw !important;
+    background-color: rgb(132, 164, 186)  !important;
+    color: white !important;
+    font-size: 16px !important;
+    font-family: Ubuntu Mono, monospace !important;
+}
+
+.tab-selected-style {
+    width: auto  !important;
+    border: 2px solid #d6d6d6  !important;
+    background-color: rgb(21, 100, 165)  !important;
+    font-size: 17px  !important;
+    margin-left: 1vw  !important;
+    margin-right: 1vw  !important;
+    font-weight: bold  !important;
+    color: white  !important;
+    font-family: Ubuntu Mono, monospace  !important;
+    padding: 6px  !important;
+}
+
+.tab-container {
+    -webkit-flex-direction: row;
+}
+
+@media only screen and (max-width: 768px) {
+    .graph-container {
+        width: 100%;
+    }
+    .tab-style {
+        font-size: 10px !important;
+    }
+    .tab-selected-style {
+        font-size: 12px !important;
+    }
+    .mobilespace {
+        margin-bottom: 2vh;
+    }
+}
+
+
