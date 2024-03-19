@@ -166,8 +166,6 @@ entity_table = dash_table.DataTable(
             'backgroundColor': 'black'
         }
     ],
-    # Uncomment if pagination is needed
-    # page_size=12,
 )
 
 entity_table_blobs = dash_table.DataTable(
@@ -196,8 +194,6 @@ entity_table_blobs = dash_table.DataTable(
             'backgroundColor': 'black'
         }
     ],
-    # Uncomment if pagination is needed
-    # page_size=12,
 )
 
 builder_table_blobs = dash_table.DataTable(
@@ -543,16 +539,7 @@ def generate_historic_data_content():
                     cards5
                 ],
                 style={"padding-bottom": "10vh"},
-            ),
-            #html.Div(
-            #    [
-            #        dcc.Graph(
-            #            figure=fields4,
-            #            style={"marginBottom": "10vh"},
-            #        ),
-            #     ]
-            #),
-            
+            ),            
         ],
     )
     return content
@@ -614,16 +601,16 @@ app.index_string = '''
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@nero_ETH">
         <meta name="twitter:title" content="Ethereum Calldata Dashboard">
-        <meta name="twitter:description" content="Insights into block sizes and calldata usage on Ethereum.">
+        <meta name="twitter:description" content="Insights into block sizes and calldata + blob usage on the Ethereum blockchain.">
         <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/calldatagames_og_image.jpg">
         <meta property="og:title" content="Calldata.pics" relay="" api="" dashboard="">
         <meta property="og:site_name" content="calldata.pics">
         <meta property="og:url" content="calldata.pics">
-        <meta property="og:description" content="Insights into block sizes and calldata usage on Ethereum.">
+        <meta property="og:description" content="Insights into block sizes and calldata + blob usage on the Ethereum blockchain.">
         <meta property="og:type" content="website">
         <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/calldatagames_og_image.jpg">
-        <meta name="description" content="Insights into block sizes and calldata usage on Ethereum.">
-        <meta name="keywords" content="Ethereum, Calldata, DotPics, Dashboard">
+        <meta name="description" content="Insights into block sizes and calldata + blob usage on the Ethereum blockchain.">
+        <meta name="keywords" content="Ethereum, Calldata, Blobs, DotPics, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
         <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/calldata.pics/main/assets/favicon.png">
         {%metas%}
@@ -641,7 +628,6 @@ app.index_string = '''
 </html>
 '''
 
-#app.scripts.append_script({"external_url": "update_window_width.js"})
 app.clientside_callback(
     "window.dash_clientside.update_window_size",
     Output('window-size-store', 'data'),
