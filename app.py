@@ -137,7 +137,7 @@ cards5 = html.Div([row_6], style={'padding-top': '20px', 'marginLeft': '1vw', 'm
 cards51 = html.Div([row_61], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
 cards6 = html.Div([row_7], style={'padding-top': '20px', 'marginLeft': '1vw', 'marginRight': '1vw'})
 
-cards_blobs_0 =  html.Div([row_blob], style={'padding-top': '0px', 'marginLeft': '1vw', 'marginRight': '1vw', 'marginBottom': '6vw'})
+cards_blobs_0 =  html.Div([row_blob], style={'padding-top': '0px', 'marginLeft': '1vw', 'marginRight': '1vw', 'marginBottom': '0vw'})
 
 
 entity_table = dash_table.DataTable(
@@ -172,7 +172,7 @@ entity_table_blobs = dash_table.DataTable(
     id='table',
     columns=[{"name": i, "id": i} for i in entities_blob_summary.columns],
     data=entities_blob_summary.to_dict('records'),
-    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"5vh"},
+    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "marginBottom":"10vh"},
     style_cell={
         'color': 'white',
         'backgroundColor': 'black',
@@ -200,7 +200,7 @@ builder_table_blobs = dash_table.DataTable(
     id='table',
     columns=[{"name": i, "id": i} for i in builder_blob_summary.columns],
     data=builder_blob_summary.to_dict('records'),
-    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"5vh"},
+    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "marginBottom":"10vh"},
     style_cell={
         'color': 'white',
         'backgroundColor': 'black',
@@ -228,7 +228,7 @@ relay_table_blobs = dash_table.DataTable(
     id='table',
     columns=[{"name": i, "id": i} for i in relay_blob_summary.columns],
     data=relay_blob_summary.to_dict('records'),
-    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"5vh"},
+    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"10vh"},
     style_cell={
         'color': 'white',
         'backgroundColor': 'black',
@@ -257,7 +257,7 @@ relay_table_blobs = dash_table.DataTable(
 def generate_blob_data_content():
     content = html.Div(
         [
-            dbc.Row(entity_table_blobs),
+            cards_blobs_0,
             html.Div(
                 [
                     html.H4("Blobs per Entity"),
@@ -269,7 +269,8 @@ def generate_blob_data_content():
                 ],
                 style={"width": "100%", "marginBottom": "0vh", "marginTop": "5vh"},
             ),
-            cards_blobs_0,
+            dbc.Row(entity_table_blobs),
+            
             
             html.Div(
                 [
