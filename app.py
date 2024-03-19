@@ -226,7 +226,6 @@ builder_table_blobs = dash_table.DataTable(
             'backgroundColor': 'black'
         }
     ],
-    page_size=10,
 )
 
 relay_table_blobs = dash_table.DataTable(
@@ -255,7 +254,6 @@ relay_table_blobs = dash_table.DataTable(
             'backgroundColor': 'black'
         }
     ],
-    page_size=10,
 )
 
 
