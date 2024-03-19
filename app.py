@@ -56,7 +56,7 @@ card_content_total_blobs = create_card(
 )
 
 card_content_total_blobs_in_gib = create_card(
-    "Total Blobs in GiB (last 24h)", 
+    "Total Blobs in MiB (last 24h)", 
     f"{blob_summary_data['Total Blobs in GB']} " + f"({blob_summary_data['delta_total_gb']}%" + (" ⬆️)" if int(blob_summary_data["delta_total_gb"]) > 0 else " ⬇️)")
 )
 
