@@ -23,7 +23,9 @@ chart_filenames = [
     "entity_calldata_blob.pickle",
     "blobentities_over_time.pickle",
     "blob_for_rollup.pickle",
-    "blobs_fee_over_time.pickle"
+    "blobs_fee_over_time.pickle",
+    "builder_over_time.pickle",
+    "relay_over_time.pickle"
 ]
 
 # Function to print file sizes in MB
@@ -43,6 +45,8 @@ calldatatxs = pd.read_parquet(CHART_LOC+"calldatatxs.parquet")
 entities_calldata_summary = pd.read_parquet(CHART_LOC+"entities_calldata_summary.parquet")
 entities_blob_summary = pd.read_parquet(CHART_LOC+"entities_blob_summary.parquet")
 blob_summary_data = pd.read_csv(CHART_LOC+"blob_summary_data.csv").to_dict('records')[0]
+builder_blob_summary = pd.read_parquet(CHART_LOC+"builder_blob_summary.parquet")
+relay_blob_summary = pd.read_parquet(CHART_LOC+"relay_blob_summary.parquet")
 
 
 with open(CHART_LOC+"gasusageperday.pickle", "rb") as file:
@@ -113,4 +117,10 @@ with open(CHART_LOC+"blobs_fee_over_time.pickle", "rb") as file:
 print("blobs_fee_over_time.pickle loaded")
 with open(CHART_LOC+'last_updated.txt', 'r') as f:
     last_updated = f.read().strip()
+with open(CHART_LOC+"builder_over_time.pickle", "rb") as file:
+    builder_over_time = pickle.load(file)
+print("builder_over_time.pickle loaded")
+with open(CHART_LOC+"relay_over_time.pickle", "rb") as file:
+    relay_over_time = pickle.load(file)
+print("relay_over_time.pickle loaded")
     

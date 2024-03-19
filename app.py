@@ -200,6 +200,65 @@ entity_table_blobs = dash_table.DataTable(
     # page_size=12,
 )
 
+builder_table_blobs = dash_table.DataTable(
+    id='table',
+    columns=[{"name": i, "id": i} for i in builder_blob_summary.columns],
+    data=builder_blob_summary.to_dict('records'),
+    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"5vh"},
+    style_cell={
+        'color': 'white',
+        'backgroundColor': 'black',
+        'border': 'none'
+    },
+    style_header={
+        'backgroundColor': '#222',
+        'fontWeight': 'bold',
+        'color': 'white',
+        'border': 'none'
+    },
+    style_data_conditional=[
+        {
+            'if': {'row_index': 'odd'},
+            'backgroundColor': '#303030'
+        },
+        {
+            'if': {'row_index': 'even'},
+            'backgroundColor': 'black'
+        }
+    ],
+    page_size=10,
+)
+
+relay_table_blobs = dash_table.DataTable(
+    id='table',
+    columns=[{"name": i, "id": i} for i in relay_blob_summary.columns],
+    data=relay_blob_summary.to_dict('records'),
+    style_table={'height': '450px', 'overflowY': 'auto', "paddingLeft": "2vw", "paddingRight": "2vw", "display": "inline-block", "fontSize": "10pt", "paddingBottom":"5vh"},
+    style_cell={
+        'color': 'white',
+        'backgroundColor': 'black',
+        'border': 'none'
+    },
+    style_header={
+        'backgroundColor': '#222',
+        'fontWeight': 'bold',
+        'color': 'white',
+        'border': 'none'
+    },
+    style_data_conditional=[
+        {
+            'if': {'row_index': 'odd'},
+            'backgroundColor': '#303030'
+        },
+        {
+            'if': {'row_index': 'even'},
+            'backgroundColor': 'black'
+        }
+    ],
+    page_size=10,
+)
+
+
 
 def generate_blob_data_content():
     content = html.Div(
@@ -218,6 +277,30 @@ def generate_blob_data_content():
             ),
             cards_blobs_0,
             
+            html.Div(
+                [
+                    html.H4("Blobs per Block Builder"),
+                    dcc.Graph(
+                        figure=builder_over_time,
+                        style={"marginBottom": "0vh"},
+                        config={"displayModeBar": False},
+                    ),
+                ],
+                style={"width": "100%", "marginBottom": "0vh"},
+            ),
+            dbc.Row(builder_table_blobs),
+            html.Div(
+                [
+                    html.H4("Blobs per MEV-Boost Relay"),
+                    dcc.Graph(
+                        figure=relay_over_time,
+                        style={"marginBottom": "0vh"},
+                        config={"displayModeBar": False},
+                    ),
+                ],
+                style={"width": "100%", "marginBottom": "0vh"},
+            ),
+            dbc.Row(relay_table_blobs,  style={"marginTop": "0vh"}),
             dbc.Row(
                 [
                     dbc.Col(
@@ -232,8 +315,8 @@ def generate_blob_data_content():
                             ],
                             style={"width": "100%", "marginBottom": "1vh"},
                         ),
-                        #width=12,
-                        #md=6,
+                        width=12,
+                        md=6,
                     ),
                     dbc.Col(
                         html.Div(
@@ -247,14 +330,12 @@ def generate_blob_data_content():
                                 ),
                             ]
                         ),
-                        #width=12,
-                        #md=6,
+                        width=12,
+                        md=6,
                     ),
                 ],
                 style={"width": "100%", "marginBottom": "1vh"},
             ),
-            
-            
             html.Div(
                 [
                     html.H4("Blobs over Slots in Epoch"),
