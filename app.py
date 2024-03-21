@@ -928,10 +928,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
     if len(blobs_to_show.index) > 0:
         figure_blobs = generate_live_blobs_per_entity_chart(blobs_to_show, _font_size_delta)
     else:
-        figure_blobs = go.Figure()
-        
-    
-        
+        figure_blobs = go.Figure()      
     
     figure = go.Figure(data=[go.Scatter(
         x=days,
