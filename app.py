@@ -828,6 +828,13 @@ def generate_live_blobs_per_entity_chart(_df, _font_size_delta):
         ),
         showlegend=False,
         hovermode="closest",
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=16-_font_size_delta,
+            font_family="Ubuntu Mono",
+            font_color="black"
+        ),
+
         xaxis=dict(
             fixedrange=True,
             gridcolor="rgba(255, 255, 255, 0.5)",

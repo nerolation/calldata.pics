@@ -75,7 +75,7 @@ def prep_livedata(df):
     return df
 
 def read_table_from_heroku(dataset_name, columns = "*", sort_column="id"):
-    return pd.read_sql_query(text(f"SELECT {columns} FROM {dataset_name} ORDER BY {sort_column} desc LIMIT {MAX_BLOCKS_TO_FETCH}"), conn)
+    return pd.read_sql_query(text(f"SELECT DISTINCT {columns} FROM {dataset_name} ORDER BY {sort_column} desc LIMIT {MAX_BLOCKS_TO_FETCH}"), conn)
 
 def create_card(header, body):
     return dbc.Card([
