@@ -890,12 +890,13 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
     df = pd.DataFrame() if n == 0 or stored_data is None else pd.DataFrame.from_records(stored_data)
     df_blobs = pd.DataFrame(columns=["slot", "time"]) if n == 0 or stored_data2 is None else pd.DataFrame.from_records(stored_data2)
     last_updated_new = last_updated
-    if (n == 0 or stored_data is None or n % (MAX_BLOCKS_TO_FETCH - 25) == 0) and n <= 600:
+    if (n == 0 or stored_data is None or n % (MAX_BLOCKS_TO_FETCH - 25) == 0 or stored_data2 is None) and n <= 600:
         #print("extending data")
         _df = read_table_from_heroku("blocks")
         _df_blobs = read_table_from_heroku("blobs", "*", "slot")
         _df = prep_livedata(_df)
         _df_blobs = prepare_blob_data(_df_blobs)
+        
         df = pd.concat([df, _df], ignore_index=True).drop_duplicates()
         df_blobs = pd.concat([df_blobs, _df_blobs], ignore_index=True).drop_duplicates()
         stored_data = df.to_dict('records')
@@ -903,7 +904,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
     elif stored_data is None:
         raise PreventUpdate
     
-    SHOW_INITIALLY = 10
+    SHOW_INITIALLY = 30
     user_timezone = tz_info if tz_info else 'UTC'
     df['time'] = pd.to_datetime(df['time'])
     df_blobs['time'] = pd.to_datetime(df_blobs['time'])
@@ -1228,15 +1229,19 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
             gridcolor="rgba(255, 255, 255, 0.5)"
         ),
     )
-    if len(blobs_to_show) > 0:
-        figure6.add_trace(go.Scatter(
+    if len(blobs_to_show.index) > 0:
+        figure6 = go.Figure(data=[go.Scatter(
             x=days,
-            y=blobs_to_show["blob_gas_price"].tolist(),
-            mode='lines',
-            line=dict(color='red', dash='longdash', width=2),
-            hovertemplate='Blob Gas Price: %{y:.2f} gwei<extra></extra>',
-            name='Blob Target'
-        ))
+            y=blobs_to_show["blob_gas_price"]//1e9,
+            mode='lines+markers',
+            fillcolor='rgba(255, 127, 14, 0.6)', line_color='rgba(255, 127, 14, 0.6)',
+            line_width=4,
+            name="Blobs",
+            customdata=slots,
+            hovertemplate='Slot: %{customdata:,}<br>Zero-Bytes: %{y:.2f} MB<extra></extra>',
+
+        )])
+
         figure6.update_layout(
             title=None,
             xaxis_title="Time",
@@ -1286,10 +1291,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
             ),
         width=1,
         height=1
-        
-    
-    
-    
+
     return (
         figure, 
         figure2, 

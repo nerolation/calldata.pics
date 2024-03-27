@@ -59,11 +59,16 @@ def prepare_blob_data(_df):
     df["entity"] = df["address_from"].apply(lambda x: entities[x] if x in entities.keys() else x[0:10] + "...")
     largest = df.groupby("entity")["nr_blobs"].sum().reset_index().sort_values("nr_blobs", ascending=False)["entity"].tolist()[0:10]
     df = df[df["entity"].isin(largest)]
-    df = df.groupby(["entity", "slot"])["nr_blobs"].sum().reset_index().sort_values("slot")
+    aggregation = {
+        "nr_blobs": "sum",
+        "blob_gas_price": "mean"
+    }
+    df = df.groupby(["entity", "slot"]).agg(aggregation).reset_index().sort_values("slot")
     df.set_index("entity", inplace=True)
     df = df.loc[largest]
     df.reset_index(inplace=True)
     df["slot"] = df["slot"].astype(int)
+    df["blob_gas_price"] = df["blob_gas_price"].astype(int)
     df["time"] = df["slot"].apply(lambda x: slot_to_time(x))  
     return df
 
@@ -75,7 +80,7 @@ def prep_livedata(df):
     df["time"] = df["slot"].apply(lambda x: slot_to_time(x))    
     return df
 
-def read_table_from_heroku(dataset_name, columns = "*", sort_column="id"):
+def read_table_from_heroku(dataset_name, columns = "*", sort_column="slot"):
     return pd.read_sql_query(text(f"SELECT DISTINCT {columns} FROM {dataset_name} ORDER BY {sort_column} desc LIMIT {MAX_BLOCKS_TO_FETCH}"), conn)
 
 def create_card(header, body):
