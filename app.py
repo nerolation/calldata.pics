@@ -1209,6 +1209,9 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
             gridcolor="rgba(255, 255, 255, 0.5)"
         ),
     )
+    
+    
+    
     return (
         figure, 
         figure2, 
