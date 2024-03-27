@@ -692,6 +692,12 @@ app.layout = html.Div(
                                 style={"margin-bottom": "5vh", "height": "40vh"},
                                 config={"displayModeBar": False},
                             ),
+                            html.H2("Live Blob Gas Price", style={"margin-top": "5vh"}),
+                            dcc.Graph(
+                                id="live-bubble-chart6",
+                                style={"margin-bottom": "5vh", "height": "40vh"},
+                                config={"displayModeBar": False},
+                            ),
                             html.H2("Live Block Size", style={"margin-top": "5vh"}),
                             dcc.Graph(
                                 id="live-bubble-chart",
@@ -866,6 +872,7 @@ app.clientside_callback(
     Output('live-bubble-chart3', 'figure'),
     Output('live-bubble-chart4', 'figure'),
     Output('live-bubble-chart5', 'figure'),
+    Output('live-bubble-chart6', 'figure'),
     Output('live-blob-chart', 'figure'),
     Output('stored-data', 'data'),
     Output('stored-data2', 'data'),
@@ -896,7 +903,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
     elif stored_data is None:
         raise PreventUpdate
     
-    SHOW_INITIALLY = 25
+    SHOW_INITIALLY = 10
     user_timezone = tz_info if tz_info else 'UTC'
     df['time'] = pd.to_datetime(df['time'])
     df_blobs['time'] = pd.to_datetime(df_blobs['time'])
@@ -928,7 +935,19 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
     if len(blobs_to_show.index) > 0:
         figure_blobs = generate_live_blobs_per_entity_chart(blobs_to_show, _font_size_delta)
     else:
-        figure_blobs = go.Figure()      
+        figure_blobs = go.Figure()
+        figure_blobs.update_layout(
+            plot_bgcolor="#0a0a0a",
+            paper_bgcolor="#0a0a0a",
+            xaxis=dict(
+                    fixedrange=True,
+                    showgrid=False
+                ),
+            yaxis=dict(
+                    fixedrange=True,
+                    showgrid=False
+                ), 
+        )     
     
     figure = go.Figure(data=[go.Scatter(
         x=days,
@@ -1209,6 +1228,65 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
             gridcolor="rgba(255, 255, 255, 0.5)"
         ),
     )
+    if len(blobs_to_show) > 0:
+        figure6.add_trace(go.Scatter(
+            x=days,
+            y=blobs_to_show["blob_gas_price"].tolist(),
+            mode='lines',
+            line=dict(color='red', dash='longdash', width=2),
+            hovertemplate='Blob Gas Price: %{y:.2f} gwei<extra></extra>',
+            name='Blob Target'
+        ))
+        figure6.update_layout(
+            title=None,
+            xaxis_title="Time",
+            yaxis_title="Gwei",
+            margin={"t": 0, "b": 0, "r": 50, "l": 50},
+            plot_bgcolor="#0a0a0a",
+            paper_bgcolor="#0a0a0a",
+            font=dict(
+                color="white",
+                size=16-_font_size_delta
+            ),
+            legend=dict(
+                yanchor="top",
+                y=1,
+                xanchor="left",
+                x=0.91,
+                bgcolor='rgba(10, 10, 10, 0)',
+                font=dict(
+                    color="white",
+                    size=16-_font_size_delta
+                ),
+            ),
+            dragmode=False,
+            hovermode="x unified",
+            xaxis=dict(
+                fixedrange=True,
+                gridcolor="rgba(255, 255, 255, 0.5)"
+            ),
+            yaxis=dict(
+                fixedrange=True,
+                gridcolor="rgba(255, 255, 255, 0.5)"
+            ),
+        )
+    else:
+        figure6 = go.Figure()
+        figure6.update_layout(
+            plot_bgcolor="#0a0a0a",
+            paper_bgcolor="#0a0a0a"
+        ),
+        xaxis=dict(
+                fixedrange=True,
+                showgrid=False
+            ),
+        yaxis=dict(
+                fixedrange=True,
+                showgrid=False
+            ),
+        width=1,
+        height=1
+        
     
     
     
@@ -1218,6 +1296,7 @@ def update_line_chart(n, tz_info, stored_data, stored_data2, size_data):
         figure3, 
         figure4, 
         figure5, 
+        figure6, 
         figure_blobs, 
         stored_data, 
         stored_data2, 
